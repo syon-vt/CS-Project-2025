@@ -82,15 +82,23 @@ def shop():
 	cls()
 	match input('1. Create Post\
 				   2. Browse Posts\
-				   3. Edit Profile:\n'):
+				   3. Edit Profile\n'):
 		case '1':
 			cls()
-			cur.execute("INSERT INTO ProductData VALUES(%s, %s, %s, %s, %s)", (increment('pid', 'productdata'), uname, input("Enter Caption(blank for none): "), askopenfile(mode = 'rb', filetypes=("Image Files", "*.png *.jpg")).read(), int(input("Price of item: "))))
+			try:
+				cur.execute("INSERT INTO ProductData VALUES(%s, %s, %s, %s)", (increment('pid', 'productdata'), uname, input("Enter Caption(blank for none): "), askopenfile(mode = 'rb', filetypes=[('Image File', '*.png'), ('Image File','*.jpg')]).read()))
+			except AttributeError:
+				print("Image Not Selected")
+				shop()
 		case '2':
 			browse()
+		case '3':
+			cls()
+			cur.execute(f'UPDATE UserData SET {input("What do you want to update(Name, Description, Email, Password):")} = "{input("Enter new Value: ")}" WHERE uname = "{uname}" ')
+			if input("Are you sure(y/n): ").lower()[0] != 'y':
+				print("Changed")
+
 	sql.commit()
-	print("Product Added Successfully!")
-	shop()
 
 #Main Browsing Page
 def browse():

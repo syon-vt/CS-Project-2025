@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/style.css">
+    <title>Sign Up - Findr</title>
+</head>
+<body>
+    {% if get_flashed_messages() %}
+        {% for type, message in get_flashed_messages(with_categories=True) %}
+        <div class="{{type}}-box">
+            <p class="msg center">{{message}}</p>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <img src="static/logo.svg" alt="Findr Logo", class="center logo">
+    <form method="post" style="display: flex;" class="center">
+
+            <button value="shop" name = 'userType' class="optbutton">
+                <img src="static/store.svg" style="height: 200px;">
+                <p>Shop</p>
+            </button>
+
+            <button value="user" name = 'userType' class="optbutton">
+                <img src="static/user.svg" style="height: 200px">
+                <p>User</p>
+            </button>
+    </form>
+
+    <form method="post" action="/signup">
+        <div class="center">
+
+            {% if userType == 'shop' %}
+                <input autocomplete="off" required="required" name="name" type="text" class="center credentials" placeholder="Shop Name">
+                <textarea autocomplete="off" required="required" name="desc" placeholder="Description" class="center credentials" style="resize: none; overflow-y: hidden;"></textarea>
+                <input autocomplete="off" required="required" name="uname" type="text" class="center credentials" placeholder="Username">
+                <input autocomplete="off" required="required" name="email" type="email" class="center credentials" placeholder="email" value="{{email}}">
+                <input autocomplete="off" required="required" name="password" type="password" class="center credentials" placeholder="Password">
+                <button class = 'center credentials' type="submit" id = 'submit'>Sign Up</button>
+                <input type="hidden" name="userType" value="shop">
+
+            {% elif userType == 'user' %}
+                <input autocomplete="off" required="required" name="name" type="text" class="center credentials" placeholder="Name">
+                <input autocomplete="off" required="required" name="uname" type="text" class="center credentials" placeholder="Username">
+                <input autocomplete="off" required="required" name="email" type="email" class="center credentials" placeholder="email" value="{{email}}">
+                <input autocomplete="off" required="required" name="password" type="password" class="center credentials" placeholder="Password">
+                <button class = 'credentials center' type="submit" id = 'submit'>Sign Up</button>
+                <input type="hidden" name="userType" value="user">
+
+            {% endif %}
+
+            <p class="center text">Have an account? <a href="{{url_for('signin')}}">Sign In!</a></p>
+        
+        </div>
+    </form>
+</body>
+</html>

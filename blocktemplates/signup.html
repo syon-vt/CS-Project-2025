@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Signup{% endblock %}
+
+{% block content %}
+    <form method="post" action="/signup">
+        <div class="center">
+
+                <input autocomplete="off" required="required" name="name" type="text" class="center credentials" placeholder="Name">
+                <textarea autocomplete="off" required="required" name="desc" placeholder="Description" class="center credentials" style="resize: none; overflow-y: hidden;"></textarea>
+                <input autocomplete="off" required="required" name="uname" type="text" class="center credentials" placeholder="Username">
+                <input autocomplete="off" required="required" name="email" type="email" class="center credentials" placeholder="email" value="{{email}}">
+                <input autocomplete="off" required="required" name="password" type="password" class="center credentials" placeholder="Password">
+                <button class = 'center credentials' type="submit" id = 'submit'>Sign Up</button>
+
+            <p class="center text">Have an account? <a href="{{url_for('signin')}}">Sign In!</a></p>
+        </div>
+    </form>
+{% endblock %}

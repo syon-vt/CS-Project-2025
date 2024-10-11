@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}My Cart{% endblock %}
+
+{% block content %}
+{% if details %}
+<h1>Your Cart,</h1>
+    {% for product in details %}
+    <div style="display: flex;">
+        <img src="data:image/png;base64,{{b64encode(product[3]).decode('utf-8')}}" class="cartimage">
+        <div style="margin-left: 10px;">
+        <p>{{product[2]}}</p>
+        <p>Sold By: {{name}}</p>
+        <p>Price: ₹{{product[4]}}</p>
+        </div>  
+    </div>  
+    {% endfor %}
+    <h2>Total Price: {{total}}</h2>
+{% else %}
+<h1>Your Cart is Empty. <a href="{{url_for('home')}}">Add Some items now!</a></h1>{% endif %}
+{% endblock %}

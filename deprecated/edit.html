@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/style.css">
+    <title>Edit Profile - Findr</title>
+</head>
+<body>
+    {% if get_flashed_messages() %}
+    {% for type, message in get_flashed_messages(with_categories=True) %}
+    <div class="{{type}}-box">
+        <p class="msg center">{{message}}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <a href="{{url_for('home')}}"><img src="static/logo.svg" class="logo center" id="iconlogo"></a>
+    <ul class="sidebar">
+        <li><a href="{{url_for('upload')}}"><img src="static/plus.svg" class="icons center hover"></a></li>
+        <li><a href="{{url_for('edit')}}"><img src="static/edit.svg" class="icons center hover"></a></li>
+        <li><a href="{{url_for('init')}}"><img src="static/logout.svg" class="icons center hover"></a></li>
+    </ul>
+
+
+    <h1>Edit {{name}}'s Profile</h1>
+    <form method="post" action="/edit">
+        <input required="required" style="display: block;" class="credentials hover" type="text" name="NAME" value="{{dictionary['NAME']}}" placeholder="Name">
+        <input required="required" style="display: block;" class="credentials hover" type="text" name="DECRIP" value="{{dictionary['DECRIP']}}" placeholder="Description">
+        <input required="required" style="display: block;" class="credentials hover" type="text" name="EMAIL" value="{{dictionary['EMAIL']}}" placeholder="Email">
+        <input required="required" style="display: block;" class="credentials hover" type="text" name="PWD" value="{{dictionary['PWD']}}" placeholder="Password">
+        <button class = 'center credentials' type="submit" id = 'submit'>Change</button>
+    </form>
+</body>
+</html>

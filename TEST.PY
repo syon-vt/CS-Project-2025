@@ -1,20 +1,23 @@
+from tkinter.filedialog import askopenfile
+from difflib import get_close_matches
+from prettytable import PrettyTable
 import mysql.connector as mc
 from getpass import getpass
 from os import system
-from tkinter.filedialog import askopenfile
 from tkinter import Tk
 from PIL import Image
-from difflib import get_close_matches
 from io import BytesIO
-from prettytable import PrettyTable
 
 
 Tk().withdraw()
 
-sql = mc.connect(host='localhost', user = 'root', password='1234', database='syon_project')
-cur = sql.cursor()
-uname = 'reliefmedicals'#input('Username: ')
-
+def init():
+	global sql
+	global cur
+	global uname
+	sql = mc.connect(host='localhost', user = 'root', password='1234', database='syon_project')
+	cur = sql.cursor(buffered=True)
+init()
 
 def cls():
 	system('cls')
@@ -41,6 +44,10 @@ def getRow(table, cond, val):
 		return rows[0]
 	else:
 		return rows
+	
+def getOne(col, table, cond, val):
+	cur.execute(f'SELECT {col} from {table} where {cond}="{val}";')
+	return cur.fetchone()[0]
 
 def signup(type):
 	match type:
@@ -64,10 +71,6 @@ def signup(type):
 	cur.execute('INSERT INTO UserData VALUES(%s, %s, %s, %s, %s, %s, %s, %s)', (increment('UID', 'UserData'), name, uname, desc, email, pwd, 0, type))
 	sql.commit()
 
-def getOne(col, table, cond, val):
-	cur.execute(f'SELECT {col} from {table} where {cond}="{val}";')
-	return cur.fetchone()[0]
-
 def shop():
 	cls()
 	match input('1. Create Post\
@@ -77,11 +80,15 @@ def shop():
 			cls()
 			try:
 				cur.execute("INSERT INTO ProductData VALUES(%s, %s, %s, %s)", (increment('pid', 'productdata'), uname, input("Enter Caption(blank for none): "), askopenfile(mode = 'rb', filetypes=[('Image File', '*.png'), ('Image File','*.jpg')]).read()))
+				cur.execute("UPDATE UserData SET POSTCOUNT = POSTCOUNT+1 WHERE uname=%s", (uname))
 			except AttributeError:
 				print("Image Not Selected")
 				shop()
+
 		case '2':
+			cls()
 			browse()
+
 		case '3':
 			cls()
 			cur.execute(f'UPDATE UserData SET {input("What do you want to update(Name, Description, Email, Password):")} = "{input("Enter new Value: ")}" WHERE uname = "{uname}" ')
@@ -91,9 +98,11 @@ def shop():
 
 	sql.commit()
 
-def browse():
-	cls()
-	cur.execute('select * from productdata;')
+def browse(uname=None):
+	if uname:# != 'None':
+		cur.execute(f'select * from productdata where uname = "{uname}";')
+	else:
+		cur.execute('select * from productdata;')
 	products = cur.fetchall()
 
 	for i in range(1, len(products)+1):
@@ -115,11 +124,12 @@ def productPage(pid):
 		comment = (getRow('CommentData', 'pid', pid))
 		print(f'@{comment[2]}:\n{comment[3]}\n')
 
-	#Image.open(BytesIO(data[3])).show()
+	Image.open(BytesIO(data[3])).show()
 	match input("1. Comment\n2. Go Back\n"):
 		case "1":
 			comment(pid)
 		case "2":
+			cls()
 			browse()
 
 def ifExists(value:str):
@@ -144,17 +154,14 @@ def table(title):
 
 def root():
 	cls()
-	match input("1. Browse\n2. Search for shops\n3. View tables\n4. Ban user\n5. Delete Post\n6. SQL console\n7. Logout"):
+	match input("1. Browse\n2. View tables\n3. Ban user\n4. Delete Post\n5. SQL console\n6. Logout"):
 
 		case "1":
+			cls()
 			browse()
 			root()
 
 		case "2":
-			productPage(ifExists(input("Enter shop name: ")))
-			root()
-
-		case "3":
 			cur.execute("SELECT * FROM Userdata;")
 			table("USERDATA")
 			cur.execute("SELECT PID, uname, CAPTION, PRICE from ProductData;")
@@ -162,7 +169,7 @@ def root():
 			input()
 			root()
 
-		case "4":
+		case "3":
 			name = input("Enter username of user: ")
 			if input("Are you sure(y/n):")[0].lower() =='y':
 				cur.execute(f'DELETE FROM USERDATA WHERE UNAME="{name}"')
@@ -172,7 +179,7 @@ def root():
 			input()
 			root()
 
-		case "5":
+		case "4":
 			pid = input("Enter pid: ")
 			if input("Are you sure(y/n):")[0].lower() =='y':
 				cur.execute(f'DELETE FROM Productdata WHERE PID="{pid}"')
@@ -182,7 +189,7 @@ def root():
 			input()
 			root()
 
-		case "6":
+		case "5":
 			query = ""
 			while query != 'exit':
 				query = input("mysql> ")
@@ -193,7 +200,7 @@ def root():
 				pass
 			root()
 			
-		case "7":
+		case "6":
 			print("Logging Out...")
 			exit()
 
@@ -209,8 +216,48 @@ def comment(pid):
 	cur.execute('INSERT INTO CommentData VALUES(%s, %s, %s, %s)', (increment('CID', 'CommentData'), pid, uname, check255("Enter Caption: ")))
 	sql.commit()
 
+def shopPage(uname):
+	data = getRow('userdata', 'uname', uname)
+	print(f"{data[0]} \n@+{data[1]}\nNo of Post(s): {data[5]}")
+	browse('reliefmedicals')
+
+def all():
+	cur.execute("SELECT * from ProductData;")
+	return cur.fetchall()
+
+def postcount(uname):
+	c=0
+	for product in all():
+		if product[1].lower() == uname.lower():
+			c+=1
+	return c
+
+def upload(uname, cap, price, img):
+	cur.execute("INSERT INTO ProductData VALUES(%s, %s, %s, %s, %s)", (increment('pid', 'productdata'), uname, cap, img, price))
+	cur.execute("UPDATE UserData SET POSTCOUNT = POSTCOUNT+1 WHERE uname=%s", (uname,))
+	sql.commit()
+
+def edit(uname, newdata):
+	cur.execute('delete from userdata where uname=%s', (uname,))
+	cur.execute('insert into userdata values(%s, %s, %s, %s, %s, %s, %s)', newdata)
+	sql.commit()
+
+
+def clmn(table):
+	cur.execute(f"SELECT * FROM {table} where uname='1'")
+	return [i[0] for i in cur.description]
+
+def clear():
+	try:
+		cur.fetchall()
+	except:
+		pass
+
+def addcomment(pid, uname, caption):
+	cur.execute('INSERT INTO CommentData VALUES(%s, %s, %s, %s)', (increment('cid', 'commentdata'), pid, uname, caption))
+
+
 ###START OF TEST###
-productPage("P001")
 ###END OF TEST###
 
 sql.close()

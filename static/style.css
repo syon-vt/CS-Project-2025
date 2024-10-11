@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+:root{
+    --dark: rgb(36, 37, 38);
+}
+
+body {
+    background-color: var(--dark);
+    padding-bottom: 55px;
+    padding-left: 30px;
+    padding-right: 30px;
+    color: white;
+    font-family: 'Roboto';
+    height: 100%;
+    animation: fadeI;
+    margin: 0px;
+}
+
+img {
+    border-radius: 25px;
+}
+
+a {
+    color: white;
+    transition: 0.25s;
+}
+
+a:hover {
+    color: #3366CC;
+    cursor: pointer;
+}
+
+button:hover{
+    cursor: pointer;
+}
+
+.hover {
+    transition-duration: 0.25s;
+}
+
+.hover:hover {
+    transform: scale(1.1);
+}
+
+.credentials {
+    border-radius: 15px;
+    margin: 10px;
+    padding: 7px;
+    background-color: transparent;
+    border-style: solid;
+    width: 50%;
+    color: white;
+    transition: 0.25s;
+    border-width: 1.5px;
+    cursor: pointer;
+    border-color: gray;
+}
+
+.credentials:focus {
+    transform: scale(1.1);
+}
+
+.credentials:hover {
+    transform: scale(1.1);
+}
+
+.credentials::after{
+    transform: scale(1.1);
+}
+
+.data {
+    margin-top: 10px;
+    margin-bottom: 25px;
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.logo {
+    height: 100px;
+    width: 320px;
+    object-fit: cover;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.optbutton {
+    height: 250px;
+    width: 250px;
+    border-radius: 20%;
+    background-color: transparent;
+    border-color: grey;
+    border-style: solid;
+    color: grey;
+    margin: 25px;
+    transition-duration: 0.25s;
+}
+
+.optbutton:hover {
+    
+    background-color: grey;
+    color: whitesmoke;
+    transform: scale(1.15);
+}
+
+.error-box {
+    width: 100%;
+    height: 50px;
+    border-radius: 15px;
+    opacity: 75%;
+    background-color: #f2545b;
+}
+
+.success-box {
+    width: 100%;
+    height: 50px;
+    border-radius: 15px;
+    opacity: 75%;
+    background-color: #82dd55;
+}
+
+.msg {
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+}
+
+.text {
+    color: grey;
+}
+
+.productimage{
+    width: 500px;
+}
+
+.gridimage {
+    width: 300px;
+    aspect-ratio: 1;
+}
+
+.sidebar {
+    height: 100%;
+    width: 10%;
+    list-style: none;
+    position: relative;
+    float: right;
+    border-style: solid;
+    border-color: grey;
+    padding: 0px;
+}
+
+.icons {
+    height: 45;
+    padding-top: 21px;
+    padding-bottom: 21px;
+    object-fit: cover;
+}
+
+.products{
+    display: grid;
+    gap: 10px 10px;
+    grid-template-columns: auto auto auto auto;
+}
+
+
+.like{
+
+    height: 50px;
+    padding: 0px;
+
+}
+.cartimage{
+    width: 200px;
+    aspect-ratio: 1;
+    
+}
+
+.navbar{
+    list-style-type: none;
+    margin: 0;
+    margin-bottom: 50px;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    position: sticky;
+    top: 0;
+    border: 1px;
+    
+}
+
+.nav-items{
+    float: left;
+    padding: 1px;
+    text-decoration: none;
+    align-items: center;
+    border: 1px white;
+    transition-duration: 0.25s;
+}
+
+.nav-items:hover{
+    background-color: whitesmoke;
+}
+
+.nav-anchor{
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition-duration: 0.25s;
+}
+
+.nav-anchor:hover{
+    transform: 1.1;
+    color: black;
+}
+
+
+#title {
+    font-size: 50px;
+}
+
+#seller {
+    font-size: 25px;
+}
+
+#price {
+    font-weight: bold;
+    font-size: 30px;
+}
+
+#submit {
+    color: grey;
+    background-color: transparent;
+    border-color: grey;
+    width: 50%;
+    font-family: 'Roboto';
+    transition-duration: 0.25s;
+    text-align: center;
+    
+}
+
+#submit:hover {
+    background-color: white;
+    color: grey;
+    border-color: white;
+    transform: scale(1.1);
+}
+
+#iconlogo {
+    height: 100px;
+    object-fit: cover;
+}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Upload{% endblock %}
+{% block content %}
+
+    <h1>New Post</h1>
+    <form method="post" enctype="multipart/form-data">
+        <div style="display: block; width: 50%;">
+            <input type="text" placeholder="Caption" class="credentials" name="caption">
+            <input type="number" placeholder="Price" class="credentials file" name="price">
+            <input type="file" accept="image/*" class="credentials" name="img" style="color: grey;">
+            <button class = 'credentials' type="submit" id = 'submit'>Post</button>
+        </div>
+    </form>
+
+{% endblock %}

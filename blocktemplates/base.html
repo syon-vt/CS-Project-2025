@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/style.css">
+    <title>{% block title %}{% endblock %} - Findr</title>
+</head>
+<body>
+    {% block head %}
+    <ul class="navbar">
+        <li class="nav-items"><a class="nav-anchor left" href="{{url_for('home')}}">Logo</a></li>
+        <li class="nav-items"><a class="nav-anchor left" href="{{url_for('upload')}}">Upload</a></li>
+        <li class="nav-items"><a class="nav-anchor left" href="{{url_for('edit')}}">Edit</a></li>
+        <li class="nav-items"><a class="nav-anchor right" href="{{url_for('cart')}}">Cart</a></li>
+        {% if loggedin %}
+        <li class="nav-items" style="float: right;"><a class="nav-anchor right" href="{{url_for('init')}}">Logout</a></li>
+        {% else %}
+        <li class="nav-items" style="float: right;"><a class="nav-anchor right" href="{{url_for('signin')}}">Sign In</a></li>
+        {% endif %}
+    </ul>
+
+    {% if get_flashed_messages() %}
+        {% for type, message in get_flashed_messages(with_categories=True) %}
+        <div class="{{type}}-box">
+            <p class="msg center">{{message}}</p>
+        </div>
+        {% endfor %} 
+    {% endif %}
+
+
+
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Signin{% endblock %}
+{% block content %}
+    <div class="center">
+    <form action="/signin" method="post">
+        <input autofocus="on" required="required" class = 'center credentials' type="email" name="email" id="email", placeholder="Email">
+        <input required="required" class = 'center credentials', type="password" name="password" id="pwd", placeholder="Password">
+        <button class = 'credentials center' type="submit" id = 'submit'>Sign In</button>
+    </form>
+
+    <p class="center text">New Here? <a href="{{url_for('signup')}}">Sign Up!</a></p>
+    </div>
+
+{% endblock %}
