@@ -3,6 +3,7 @@ from base64 import b64encode
 from logging import error
 import functions as sql
 from pickle import dumps
+from hashlib import sha256
 
 sql.init()
 app = Flask(__name__, template_folder='blocktemplates', static_folder='static')
@@ -33,7 +34,7 @@ def signin():
                 return redirect(url_for('signup'))
             
             else:
-                if data.get('password') == sql.getOne('pwd', 'userdata', 'email', data['email']):   
+                if sha256(data.get('password').encode()).hexdigest() == sql.getOne('pwd', 'userdata', 'email', data['email']):   
                     session['loggedin'] = True
                     session['uname'] = sql.getOne('uname', 'userdata', 'email', session.get('email'))
                     return redirect(url_for('home'))
@@ -58,7 +59,8 @@ def signup():
             session['email'] = data.get('email')
 
             try:
-                sql.signup(data.get('name'), session.get('uname'), data.get('desc'), data.get('email'), data.get('password'))
+                password = sha256(data.get('password').encode()).hexdigest()
+                sql.signup(data.get('name'), session.get('uname'), data.get('desc'), data.get('email'), password)
                 session['loggedin'] = True
                 return redirect(url_for('home'))
             
