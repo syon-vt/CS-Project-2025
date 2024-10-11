@@ -13,6 +13,7 @@ cur.execute("CREATE TABLE IF NOT EXISTS ProductData(PID VARCHAR(4) PRIMARY KEY, 
 cur.execute("CREATE TABLE IF NOT EXISTS FollowData(FrUname VARCHAR(255) NOT NULL, FdUname VARCHAR(255) NOT NULL)")
 cur.execute("CREATE TABLE IF NOT EXISTS CommentData(CID VARCHAR(4) PRIMARY KEY, PID VARCHAR(4) NOT NULL, UNAME VARCHAR(255) NOT NULL, TEXT VARCHAR(255) NOT NULL)")
 cur.execute("CREATE TABLE IF NOT EXISTS LikeData(PID VARCHAR(4), UNAME VARCHAR(255))")
+cur.execute("CREATE TABLE IF NOT EXISTS RequestData(SELLER VARCHAR(255), BUYER VARCHAR(255), PID VARCHAR(4))")
 #cur.execute("UPDATE UserData SET CART=%s", (dumps([]),))
 #cur.execute("INSERT INTO UserData VALUES(%s, %s, %s, %s, %s, %s, %s)", ('Guest', 'Guest', 'Description', 'example@email.com', 'password', 0, dumps([])))
 sql.close()

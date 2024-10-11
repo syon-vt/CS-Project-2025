@@ -28,9 +28,7 @@ def getCol(col, table):
 
 def getRow(table, cond, val):
 	cur.execute(f'SELECT * FROM {table} WHERE {cond}="{val}";')
-	rows = cur.fetchall()
-
-	return rows
+	return cur.fetchall()
 	
 def getOne(col, table, cond, val):
 	cur.execute(f'SELECT {col} from {table} where {cond}="{val}"')
@@ -116,3 +114,9 @@ def remfromcart(uname, pid):
 	cur.execute("UPDATE UserData SET CART=%s WHERE UNAME=%s", (dumps(cart), uname))
 	#sql.commit()
 
+def sendrequests(pidlist, uname):
+	for pid in pidlist:
+		cur.execute("INSERT INTO RequestData VALUES(%s, %s, %s)", (getOne('uname','productdata', 'pid', pid), uname, pid))
+
+def clearcart(uname):
+	cur.execute("UPDATE UserData SET CART = %s WHERE UNAME = %s", (dumps([]), uname))

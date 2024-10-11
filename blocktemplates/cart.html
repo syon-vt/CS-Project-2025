@@ -15,6 +15,9 @@
     </div>  
     {% endfor %}
     <h2>Total Price: {{total}}</h2>
+    <form action="/cart" method="post">
+        <button type="submit" name="buy">Order Now</button>
+    </form>
 {% else %}
 <h1>Your Cart is Empty. <a href="{{url_for('home')}}">Add Some items now!</a></h1>{% endif %}
 {% endblock %}

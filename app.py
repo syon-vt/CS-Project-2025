@@ -178,9 +178,9 @@ def upload():
 @app.route("/edit", methods=['GET', 'POST'])
 def edit():
     if session.get('loggedin'):
+
         data = sql.getRow('userdata', 'uname', session.get('uname'))
         headers = sql.clmnheads('userdata')[0:5]
-        error(dict(zip(headers, data)))
         if request.method == 'POST':
             try:
                 data = (
@@ -208,15 +208,22 @@ def edit():
         flash("You need to be Logged in to perform this action", 'error')
         return redirect(url_for('signin'))
 
-@app.route("/cart")
+@app.route("/cart", methods=['GET', 'POST'])
 def cart():
     if session.get('loggedin'):
+        
         cart = []
         total = 0
         for product in sql.getcart(session.get('uname')):
-            cart.append(sql.getRow('productdata', 'pid', product))
+            cart.append(sql.getRow('productdata', 'pid', product)[0])
+   
         for item in cart:
             total+=item[4]
+
+        if request.method == 'POST':
+            sql.sendrequests(sql.getcart(session.get('uname')), session.get('uname'))
+            sql.clearcart(session.get('uname'))
+            cart = []
 
         return render_template('cart.html',
                                 loggedin=session.get("loggedin"),
@@ -232,7 +239,7 @@ def cart():
 
 @app.errorhandler(404)
 def not_found(e):
-    return "Page Not Found", 404
+    return f"Page Not Found\n{e}", 404
 
 
 if __name__ == '__main__':
