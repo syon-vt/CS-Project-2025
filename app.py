@@ -217,6 +217,7 @@ def cart():
         
         cart = []
         total = 0
+
         for product in sql.getcart(session.get('uname')):
             cart.append(sql.getRow('productdata', 'pid', product)[0])
    
@@ -224,9 +225,17 @@ def cart():
             total+=item[4]
 
         if request.method == 'POST':
-            sql.sendrequests(sql.getcart(session.get('uname')), session.get('uname'))
-            sql.clearcart(session.get('uname'))
-            cart = []
+            if request.form.get('buy'):
+                sql.sendrequests(sql.getcart(session.get('uname')), session.get('uname'))
+                sql.clearcart(session.get('uname'))
+                cart = []
+
+            elif request.form.get('delete'):
+                sql.remfromcart(session.get('uname'), request.form.get('delete'))
+                
+                for item in cart:
+                    if item[0] == request.form.get('delete'):
+                        cart.remove(item)
 
         return render_template('cart.html',
                                 loggedin=session.get("loggedin"),
@@ -245,7 +254,6 @@ def requests():
     requests = []
     for req in all:
         requests.append(list(req)+sql.getRow('productdata', 'pid', req[2]))
-    error(len(requests))
     return render_template('requests.html', 
                            requests=requests,
                            b64encode=b64encode)

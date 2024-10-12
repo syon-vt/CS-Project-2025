@@ -5,20 +5,24 @@
 {% if details %}
 <h1>Your Cart,</h1>
     {% for product in details %}
-    <div style="padding: 25px;">
-        <a style="display: flex;" href="/{{product[0]}}">
+    <div style="padding: 25px; display: flex;">
+        <a  href="/{{product[0]}}">
         <img src="data:image/png;base64,{{b64encode(product[3]).decode('utf-8')}}" class="cartimage hover">
         <div style="margin-left: 20px;">
         <p>{{product[2]}}</p>
         <p>Sold By: {{product[1]}}</p>
         <p>Price: ₹{{product[4]}}</p>
+    </a>
+    <form action="{{url_for('cart')}}" method="post">
+        <button type="submit" name="delete" value="{{product[0]}}" style="width: 100%; margin: 0;" class="credentials red">Remove</button>
+    </form>
+
         </div>
-        </a>
     </div>  
     {% endfor %}
     <h2>Total Price: {{total}}</h2>
     <form action="/cart" method="post">
-        <button type="submit" name="buy" class="credentials">Order Now</button>
+        <button type="submit" name="buy" style="width: 25%;" class="credentials green">Order Now</button>
     </form>
 {% else %}
 <h1 class="center">Your Cart is Empty. <a href="{{url_for('home')}}">Add Some items now!</a></h1>{% endif %}
