@@ -9,15 +9,15 @@
 <body>
     {% block head %}
     <ul class="navbar">
-        <li class="nav-items"><a class="nav-anchor left" href="{{url_for('home')}}">Logo</a></li>
+        <li class="nav-items"><a class="nav-anchor left" href="{{url_for('home')}}">Home</a></li>
         <li class="nav-items"><a class="nav-anchor left" href="{{url_for('upload')}}">Upload</a></li>
         <li class="nav-items"><a class="nav-anchor left" href="{{url_for('edit')}}">Edit</a></li>
         <li class="nav-items"><a class="nav-anchor right" href="{{url_for('cart')}}">Cart</a></li>
         <li class="nav-items"><a class="nav-anchor right" href="{{url_for('requests')}}">Requests</a></li>
         {% if loggedin %}
-        <li class="nav-items" style="float: right;"><a class="nav-anchor right" href="{{url_for('init')}}">Logout</a></li>
+        <li class="nav-items red" style="float: right;"><a class="nav-anchor right red" href="{{url_for('init')}}">Logout</a></li>
         {% else %}
-        <li class="nav-items" style="float: right;"><a class="nav-anchor right" href="{{url_for('signin')}}">Sign In</a></li>
+        <li class="nav-items green" style="float: right;"><a class="nav-anchor right green" href="{{url_for('signin')}}">Sign In</a></li>
         {% endif %}
     </ul>
 
