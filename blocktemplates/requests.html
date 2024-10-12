@@ -5,8 +5,8 @@
 
     {% if requests %}
         {% for request in requests %}
-        <div style="display: flex;">
-            <a href="/{{request[2]}}">
+        <div style="padding: 25px;">
+            <a style="display: flex;" href="/{{request[2]}}">
             <img src="data:image/png;base64,{{b64encode(request[3][3]).decode('utf-8')}}" class="cartimage">
             <div style="margin-left: 10px;">
             <p>{{request[3][2]}}</p>
@@ -16,6 +16,7 @@
             </a>
         </div>
         {% endfor %}
+        
     {% else %}
     <h1 class="center">You have no Requests yet...</h1>
     {% endif %}

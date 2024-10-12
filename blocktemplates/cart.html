@@ -5,8 +5,8 @@
 {% if details %}
 <h1>Your Cart,</h1>
     {% for product in details %}
-    <div style="display: flex;">
-        <a href="/{{product[0]}}">
+    <div style="padding: 25px;">
+        <a style="display: flex;" href="/{{product[0]}}">
         <img src="data:image/png;base64,{{b64encode(product[3]).decode('utf-8')}}" class="cartimage">
         <div style="margin-left: 10px;">
         <p>{{product[2]}}</p>

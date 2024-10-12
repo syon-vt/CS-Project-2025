@@ -176,7 +176,7 @@ button:hover{
 .cartimage{
     width: 200px;
     aspect-ratio: 1;
-    
+    display: flex;
 }
 
 .navbar{
