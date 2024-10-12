@@ -28,7 +28,7 @@ def getCol(col, table):
 
 def getRow(table, cond, val):
 	cur.execute(f'SELECT * FROM {table} WHERE {cond}="{val}";')
-	return cur.fetchall()
+	return list(cur.fetchall())
 	
 def getOne(col, table, cond, val):
 	cur.execute(f'SELECT {col} from {table} where {cond}="{val}"')
@@ -120,3 +120,7 @@ def sendrequests(pidlist, uname):
 
 def clearcart(uname):
 	cur.execute("UPDATE UserData SET CART = %s WHERE UNAME = %s", (dumps([]), uname))
+
+def getrequests(shop):
+	cur.execute("SELECT * FROM RequestData WHERE SELLER=%s", (shop,))
+	return list(cur.fetchall())

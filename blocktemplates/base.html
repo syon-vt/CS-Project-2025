@@ -13,6 +13,7 @@
         <li class="nav-items"><a class="nav-anchor left" href="{{url_for('upload')}}">Upload</a></li>
         <li class="nav-items"><a class="nav-anchor left" href="{{url_for('edit')}}">Edit</a></li>
         <li class="nav-items"><a class="nav-anchor right" href="{{url_for('cart')}}">Cart</a></li>
+        <li class="nav-items"><a class="nav-anchor right" href="{{url_for('requests')}}">Requests</a></li>
         {% if loggedin %}
         <li class="nav-items" style="float: right;"><a class="nav-anchor right" href="{{url_for('init')}}">Logout</a></li>
         {% else %}

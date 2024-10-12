@@ -10,16 +10,20 @@
         <br>
         <br>
         <div class="products">
-            {% for product in products %}
-            <div>
-                    <a href="{{url_for('productpage', pid=product[0])}}">
-                        <img src="data:image/png;base64,{{b64encode(product[3]).decode('utf-8')}}" class="gridimage hover">
-                    </a>
-                    <h3>{{product[2]}}</h3>
-                    <h4>Sold By: {{(product[1])}}</h4>
-                    <p>Price: ₹{{product[4]}}</p>
-            </div>
-            {% endfor %}
+            {% if products %}
+                {% for product in products %}
+                <div>
+                        <a href="{{url_for('productpage', pid=product[0])}}">
+                            <img src="data:image/png;base64,{{b64encode(product[3]).decode('utf-8')}}" class="gridimage hover">
+                        </a>
+                        <h3>{{product[2]}}</h3>
+                        <h4>Sold By: {{(product[1])}}</h4>
+                        <p>Price: ₹{{product[4]}}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <h1>There Seems to be nothing here! <a href="{{url_for('upload')}}">Add Something Now</a></h1>
+            {% endif %}
         </div>
 
 {% endblock %}

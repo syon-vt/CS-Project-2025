@@ -179,26 +179,29 @@ def upload():
 def edit():
     if session.get('loggedin'):
 
-        data = sql.getRow('userdata', 'uname', session.get('uname'))
+        data = sql.getRow('userdata', 'uname', session.get('uname'))[0][0:5]
         headers = sql.clmnheads('userdata')[0:5]
         if request.method == 'POST':
             try:
-                data = (
+                data = [
                     request.form.get('NAME'),
                     session.get('uname'),
                     request.form.get('DECRIP'),
                     request.form.get('EMAIL'),
-                    request.form.get('PWD'),
+                    sha256(request.form.get('PWD').encode()).hexdigest(),
                     0,
-                    dumps([]))
-                
+                    dumps([])]
+            
+
+                if data[4]=="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855":
+                    data[4] = sql.getOne('pwd', 'userdata', 'uname', session.get('uname '))
+
                 sql.edit(session.get('uname'), data)
 
                 flash("Profile edited successfully", 'success')
             except Exception as e:
                 error(e)
-                flash("Process Failed", 'error')
-
+                flash(f"Process Failed {e}", 'error')
         return render_template('edit.html',
                                 loggedin=session.get("loggedin"),
                                 dictionary=dict(zip(headers, data)),
@@ -235,6 +238,17 @@ def cart():
         flash("You need to be Logged in to perform this action", 'error')
         return redirect(url_for('signin'))
     
+
+@app.route("/requests")
+def requests():
+    all = sql.getrequests(session.get('uname'))
+    requests = []
+    for req in all:
+        requests.append(list(req)+sql.getRow('productdata', 'pid', req[2]))
+    error(len(requests))
+    return render_template('requests.html', 
+                           requests=requests,
+                           b64encode=b64encode)
 
 
 @app.errorhandler(404)

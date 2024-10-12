@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Requests{% endblock %}
+
+{% block content %}
+
+    {% if requests %}
+        {% for request in requests %}
+        <div style="display: flex;">
+            <a href="/{{request[2]}}">
+            <img src="data:image/png;base64,{{b64encode(request[3][3]).decode('utf-8')}}" class="cartimage">
+            <div style="margin-left: 10px;">
+            <p>{{request[3][2]}}</p>
+            <p>Bought By: {{request[1]}}</p>
+            <p>Price: ₹{{request[3][4]}}</p>
+            </div>
+            </a>
+        </div>
+        {% endfor %}
+    {% else %}
+    <h1 class="center">You have no Requests yet...</h1>
+    {% endif %}
+
+{% endblock %}
