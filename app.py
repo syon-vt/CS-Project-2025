@@ -58,18 +58,22 @@ def signup():
             session['uname'] = data.get('uname')
             session['email'] = data.get('email')
 
-            try:
-                password = sha256(data.get('password').encode()).hexdigest()
-                sql.signup(data.get('name'), session.get('uname'), data.get('desc'), data.get('email'), password)
-                session['loggedin'] = True
-                return redirect(url_for('home'))
-            
-            except sql.mc.errors.IntegrityError as e:
-                if e.args[0] == 1062:#error code for duplicate primary key
-                    flash("Username already taken", 'error')
 
-            except Exception as e:
-                error(e)
+            if session.get('email') in sql.getCol('email', 'userdata'):
+                flash("Username already taken", 'error')
+
+            elif session.get('uname') in sql.getCol('uname', 'userdata'):
+                    flash("Username already taken", 'error')
+            
+            else:
+                try:
+                    password = sha256(data.get('password').encode()).hexdigest()
+                    sql.signup(data.get('name'), session.get('uname'), data.get('desc'), data.get('email'), password)
+                    session['loggedin'] = True
+                    return redirect(url_for('home'))
+                
+                except Exception as e:
+                    error(e)
 
         return render_template('signup.html',
                                 loggedin=session.get("loggedin"), 
