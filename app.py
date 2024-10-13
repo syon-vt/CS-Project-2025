@@ -60,7 +60,8 @@ def signup():
 
 
             if session.get('email') in sql.getCol('email', 'userdata'):
-                flash("Username already taken", 'error')
+                flash("There is already an account linked to that email", 'error')
+                return redirect(url_for('signin'))
 
             elif session.get('uname') in sql.getCol('uname', 'userdata'):
                     flash("Username already taken", 'error')
