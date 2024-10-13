@@ -116,7 +116,7 @@ def remfromcart(uname, pid):
 
 def sendrequests(pidlist, uname):
 	for pid in pidlist:
-		cur.execute("INSERT INTO RequestData VALUES(%s, %s, %s)", (getOne('uname','productdata', 'pid', pid), uname, pid))
+		cur.execute("INSERT INTO RequestData VALUES(%s, %s, %s, %s, %s)", (increment('RID', "RequestData"), getOne('uname','productdata', 'pid', pid), uname, pid, 'Pending'))
 
 def clearcart(uname):
 	cur.execute("UPDATE UserData SET CART = %s WHERE UNAME = %s", (dumps([]), uname))
@@ -124,3 +124,9 @@ def clearcart(uname):
 def getrequests(shop):
 	cur.execute("SELECT * FROM RequestData WHERE SELLER=%s", (shop,))
 	return list(cur.fetchall())
+
+def setstatus(rid, status):
+	if status == "Delete":
+		cur.execute("DELETE FROM RequestData WHERE RID=%s", (rid,))
+	else:
+		cur.execute("UPDATE RequestData SET STATUS=%s WHERE RID=%s", (status, rid))

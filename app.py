@@ -237,6 +237,7 @@ def cart():
                     if item[0] == request.form.get('delete'):
                         cart.remove(item)
 
+
         return render_template('cart.html',
                                 loggedin=session.get("loggedin"),
                                 details=cart, 
@@ -248,16 +249,32 @@ def cart():
         return redirect(url_for('signin'))
     
 
-@app.route("/requests")
+@app.route("/requests", methods=['GET', 'POST'])
 def requests():
-    all = sql.getrequests(session.get('uname'))
-    requests = []
-    for req in all:
-        requests.append(list(req)+sql.getRow('productdata', 'pid', req[2]))
-    return render_template('requests.html', 
-                           requests=requests,
-                           b64encode=b64encode)
+    if session.get('loggedin'):
 
+        all = sql.getrequests(session.get('uname'))
+        requests = []
+        for req in all:
+            requests.append([req[::2]]+sql.getRow('productdata', 'pid', req[3]))
+
+        if request.method == 'POST':
+            if request.form.get('status'):
+                status = request.form.get('status').split(',')
+                sql.setstatus(status[1], status[0])
+            error(request.form)
+            error(request.form)
+            
+
+        return render_template('requests.html', 
+                                loggedin=session.get("loggedin"),
+                                requests=requests,
+                                b64encode=b64encode)
+                               
+    else:
+        flash("You need to be Logged in to perform this action", 'error')
+        return redirect(url_for('signin'))
+    
 
 @app.errorhandler(404)
 def not_found(e):

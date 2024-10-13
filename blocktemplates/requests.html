@@ -5,15 +5,34 @@
 
     {% if requests %}
         {% for request in requests %}
-        <div style="padding: 25px;">
-            <a style="display: flex;" href="/{{request[2]}}">
-            <img src="data:image/png;base64,{{b64encode(request[3][3]).decode('utf-8')}}" class="cartimage hover">
-            <div style="margin-left: 20px;">
-            <p>{{request[3][2]}}</p>
-            <p>Bought By: {{request[1]}}</p>
-            <p>Price: ₹{{request[3][4]}}</p>
-            </div>
+        <div style="padding: 25px; display: flex;">
+            {% set item = request[1] %}
+            {% set buyer = request[0] %}
+            <a href="/{{item[0]}}">
+                <img src="data:image/png;base64,{{b64encode(item[3]).decode('utf-8')}}" class="cartimage hover">
+                <div style="margin-left: 20px;">
+
+                    <p>{{item[2]}}</p>
+                    <p>Bought By: {{buyer[1]}}</p>
+                    <p>Price: ₹{{item[4]}}</p>
             </a>
+            {% if buyer[2] == "Accepted" %}
+            <h2 style="color: green;">Accepted</h2>   
+            {% elif buyer[2] == "Cancelled" %}
+            <h2 style="color: red;">Cancelled</h2>    
+            {% else %}
+            <h2 style="color: lightgray;">Pending</h2>    
+            {% endif %}
+        </div>
+
+        <div style="margin:30px;">
+            <form action="{{url_for('requests')}}" method="post">
+                <button type="submit" name="status" class="credentials green" value="Accepted,{{buyer[0]}}">Accept</button>
+                <button type="submit" name="status" class="credentials red" value="Cancelled,{{buyer[0]}}">Cancel</button>
+                <button type="submit" name="status" class="credentials red" value="Delete,{{buyer[0]}}">Delete</button>
+            </form>
+        </div>
+
         </div>
         {% endfor %}
         

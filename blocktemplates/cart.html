@@ -22,7 +22,7 @@
     {% endfor %}
     <h2>Total Price: {{total}}</h2>
     <form action="/cart" method="post">
-        <button type="submit" name="buy" style="width: 25%;" class="credentials green">Order Now</button>
+        <button type="submit" name="buy" style="width: 25%;" class="credentials green" value="buy">Order Now</button>
     </form>
 {% else %}
 <h1 class="center">Your Cart is Empty. <a href="{{url_for('home')}}">Add Some items now!</a></h1>{% endif %}
