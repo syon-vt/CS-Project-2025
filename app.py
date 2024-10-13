@@ -1,15 +1,21 @@
-from flask import Flask, render_template, abort, request, redirect, url_for, session, flash
-from base64 import b64encode
-from logging import error
-import functions as sql
-from pickle import dumps
-from hashlib import sha256
+# ---------------------------------------------------------------------------- #
+#                                Findr: The app                                #
+# ---------------------------------------------------------------------------- #
+from flask import Flask, render_template, abort, request, redirect, url_for, session, flash # web app functionality
+from base64 import b64encode # load images from db
+from logging import error # error msgs in console
+import functions as sql # custom functions from function.py
+from pickle import dumps # serializes cart for storage
+from hashlib import sha256  # standard sha256 hashing for password
 
+
+# ------------------------ initialize flask and mysal ------------------------ #
 sql.init()
 app = Flask(__name__, template_folder='blocktemplates', static_folder='static')
 app.secret_key = "key"
 
 
+# --------------------------- logout and init page --------------------------- #
 @app.route("/", methods=['POST', 'GET'])
 def init():
     session.clear()
@@ -18,6 +24,7 @@ def init():
     return redirect(url_for('home'))
 
 
+# -------------------------------- signin pgae ------------------------------- #
 @app.route("/signin", methods=['GET', 'POST'])
 def signin():
 
@@ -27,13 +34,15 @@ def signin():
     else:
         if request.method == 'POST':
             data = request.form
-            session['email'] = data.get('email')
+            session['email'] = data.get('email') # stores email in app wide session dict
 
+            # check if account exists
             if not session.get('email') in sql.getCol('email', 'userdata'):
                 flash('There is no account linked with that email', 'error')
                 return redirect(url_for('signup'))
             
             else:
+                # checks hashed pwd with stored hashed pwd
                 if sha256(data.get('password').encode()).hexdigest() == sql.getOne('pwd', 'userdata', 'email', data['email']):   
                     session['loggedin'] = True
                     session['uname'] = sql.getOne('uname', 'userdata', 'email', session.get('email'))
@@ -45,6 +54,7 @@ def signin():
                             loggedin=session.get("loggedin"))
 
 
+# -------------------------------- signup page ------------------------------- #
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
 
@@ -58,15 +68,17 @@ def signup():
             session['uname'] = data.get('uname')
             session['email'] = data.get('email')
 
-
+            # check for dupe email
             if session.get('email') in sql.getCol('email', 'userdata'):
                 flash("There is already an account linked to that email", 'error')
                 return redirect(url_for('signin'))
 
+            # check for dupe username
             elif session.get('uname') in sql.getCol('uname', 'userdata'):
                     flash("Username already taken", 'error')
             
             else:
+                # hash and save pwd and account
                 try:
                     password = sha256(data.get('password').encode()).hexdigest()
                     sql.signup(data.get('name'), session.get('uname'), data.get('desc'), data.get('email'), password)
@@ -81,7 +93,7 @@ def signup():
                                 email = session.get('email'))
     
 
-
+# --------------------------------- home page -------------------------------- #
 @app.route("/home", methods=['GET'])
 def home():
 
@@ -89,7 +101,7 @@ def home():
                                 loggedin=session.get("loggedin"), 
                                 name=sql.getOne('name','userdata', 'uname', session.get('uname')), 
                                 products=sql.all(), 
-                                b64encode=b64encode, 
+                                b64encode=b64encode,
                                 seller=lambda uname: sql.getOne('name', 'userdata', 'uname', uname), 
                                 postno=sql.postcount(session.get('uname')),
                                 uname=session.get('uname'))

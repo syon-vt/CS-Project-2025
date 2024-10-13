@@ -7,12 +7,18 @@
             <p class="data", id="title">{{title}}</p>
             <a class="data", href="" id="seller">{{seller}}</a>
             <p class="data", id="price">₹{{price}}</p>
-            <p>{{likecount}}</p>
+
+            {% if likecount == 1 %}
+                <h4>{{likecount}} like</h4>
+            {% else %}
+            <h4>{{likecount}} likes</h4>
+            {% endif %}
+
             <form action="/{{pid}}" method="post">
                 {% if not liked %}
-                    <button class="credentials" type="submit" name="isliked" value="True"><img src="static/notliked.svg" class="like"></button>
+                <button class="credentials" type="submit" name="isliked" value="True"><img src="static/notliked.svg" class="like"></button>
                 {% else %}
-                    <button class="credentials" type="submit" name="isliked" value="False"><img src="static/liked.svg" class="like"></button>
+                <button class="credentials" type="submit" name="isliked" value="False"><img src="static/liked.svg" class="like"></button>
                 {% endif %}
 
                 {% if not incart %}
