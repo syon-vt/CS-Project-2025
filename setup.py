@@ -2,7 +2,7 @@ import mysql.connector as mc
 from pickle import dumps
 
 
-sql = mc.connect(host='localhost', user = 'root', password='1234')
+sql = mc.connect(host='localhost', user = input("Enter MySQL Username: "), password=input("Enter Mysql password: "))
 cur = sql.cursor()
 name = input("Enter Name: ")
 sql.autocommit = True

@@ -107,9 +107,7 @@ def home():
                                 uname=session.get('uname'))
 
 
-
-
-
+# ------------------------------- product page ------------------------------- #
 @app.route("/<pid>", methods=['GET', 'POST'])
 def productpage(pid):
 
