@@ -1,21 +1,26 @@
-# ---------------------------------------------------------------------------- #
-#                                Findr: The app                                #
-# ---------------------------------------------------------------------------- #
+# ------------------------------------------------------------------------#
+#                                Findr: The app                           #
+# ------------------------------------------------------------------------#
 from flask import Flask, render_template, abort, request, redirect, url_for, session, flash # web app functionality
 from base64 import b64encode # load images from db
 from logging import error # error msgs in console
 import functions as sql # custom functions from function.py
 from pickle import dumps # serializes cart for storage
 from hashlib import sha256  # standard sha256 hashing for password
+from flask_ipban import IpBan
 
-
-# ------------------------ initialize flask and mysal ------------------------ #
+# ------------------------ initialize flask and mysal --------------------#
 sql.init()
 app = Flask(__name__, template_folder='blocktemplates', static_folder='static')
 app.secret_key = "key"
 
+#Ip Ban
+bannedips = ['192.168.1.55', '192.168.1.153']
+ip_ban = IpBan(ban_seconds=200)
+ip_ban.init_app(app)
+ip_ban.block(ip_list=bannedips, permanent=True)
 
-# --------------------------- logout and init page --------------------------- #
+# --------------------------- logout and init page -----------------------#
 @app.route("/", methods=['POST', 'GET'])
 def init():
     session.clear()
@@ -24,7 +29,7 @@ def init():
     return redirect(url_for('home'))
 
 
-# -------------------------------- signin pgae ------------------------------- #
+# -------------------------------- signin page ---------------------------#
 @app.route("/signin", methods=['GET', 'POST'])
 def signin():
 
@@ -54,7 +59,7 @@ def signin():
                             loggedin=session.get("loggedin"))
 
 
-# -------------------------------- signup page ------------------------------- #
+# -------------------------------- signup page ---------------------------#
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
 
@@ -68,6 +73,7 @@ def signup():
             session['uname'] = data.get('uname')
             session['email'] = data.get('email')
 
+
             # check for dupe email
             if session.get('email') in sql.getCol('email', 'userdata'):
                 flash("There is already an account linked to that email", 'error')
@@ -80,8 +86,9 @@ def signup():
             else:
                 # hash and save pwd and account
                 try:
+                    error(request.form)
                     password = sha256(data.get('password').encode()).hexdigest()
-                    sql.signup(data.get('name'), session.get('uname'), data.get('desc'), data.get('email'), password)
+                    sql.signup(data.get('name'), session.get('uname'), data.get('email'), password)
                     session['loggedin'] = True
                     return redirect(url_for('home'))
                 
@@ -93,21 +100,24 @@ def signup():
                                 email = session.get('email'))
     
 
-# --------------------------------- home page -------------------------------- #
-@app.route("/home", methods=['GET'])
+# --------------------------------- home page ----------------------------#
+@app.route("/home", methods=['GET', 'POST'])
 def home():
+    filt = None
+    if request.method == 'POST':
+        filt = request.form.get('search')
 
-        return render_template('home.html',
-                                loggedin=session.get("loggedin"), 
-                                name=sql.getOne('name','userdata', 'uname', session.get('uname')), 
-                                products=sql.all(), 
-                                b64encode=b64encode,
-                                seller=lambda uname: sql.getOne('name', 'userdata', 'uname', uname), 
-                                postno=sql.postcount(session.get('uname')),
-                                uname=session.get('uname'))
+    return render_template('home.html',
+                            loggedin=session.get("loggedin"), 
+                            name=sql.getOne('name','userdata', 'uname', session.get('uname')), 
+                            products=sql.all(filt), 
+                            b64encode=b64encode,
+                            seller=lambda uname: sql.getOne('name', 'userdata', 'uname', uname), 
+                            postno=sql.postcount(session.get('uname')),
+                            filter=filt)
 
 
-# ------------------------------- product page ------------------------------- #
+# ------------------------------- product page ---------------------------#
 @app.route("/<pid>", methods=['GET', 'POST'])
 def productpage(pid):
 
@@ -168,6 +178,7 @@ def productpage(pid):
         abort(404)
 
 
+# -------------------------------- upload page ---------------------------#
 @app.route("/upload", methods=['GET', 'POST'])
 def upload():
 
@@ -189,7 +200,8 @@ def upload():
         flash("You need to be Logged in to perform this action", 'error')
         return redirect(url_for('signin'))
 
-#everything is fucked? i hope...?
+
+# ------------------------------- edit profile ---------------------------#
 @app.route("/edit", methods=['GET', 'POST'])
 def edit():
     if session.get('loggedin'):
@@ -226,6 +238,8 @@ def edit():
         flash("You need to be Logged in to perform this action", 'error')
         return redirect(url_for('signin'))
 
+
+# ----------------------------------- cart -------------------------------#
 @app.route("/cart", methods=['GET', 'POST'])
 def cart():
     if session.get('loggedin'):
@@ -264,6 +278,7 @@ def cart():
         return redirect(url_for('signin'))
     
 
+# --------------------------------- requests -----------------------------#
 @app.route("/requests", methods=['GET', 'POST'])
 def requests():
     if session.get('loggedin'):
@@ -273,12 +288,11 @@ def requests():
         for req in all:
             requests.append([req[::2]]+sql.getRow('productdata', 'pid', req[3]))
 
+
         if request.method == 'POST':
             if request.form.get('status'):
                 status = request.form.get('status').split(',')
                 sql.setstatus(status[1], status[0])
-            error(request.form)
-            error(request.form)
             
 
         return render_template('requests.html', 
@@ -291,10 +305,36 @@ def requests():
         return redirect(url_for('signin'))
     
 
+# -------------------------------- Admin Page -------------------------------- #
+@app.route("/admin", methods=['GET','POST'])
+def admin():
+    global bannedips
+    if request.method == 'POST':
+        if request.form.get('banip'):
+            bannedips = request.form.get('banip').split('\r\n')
+        
+        if request.form.get('user'):
+            sql.banuser(request.form.get('user'))
+            flash('User Deleted', 'success')
+
+        if request.form.get('product'):
+            sql.delpost(request.form.get('product'))
+            flash('Product Deleted', 'success')
+
+    error(bannedips)
+    return render_template('admin.html',
+                           loggedin=session.get('loggedin'), 
+                           bannedips='\n'.join(bannedips),
+                           uname=session.get('uname'))
+
+
+# ------------------------------------ 404 -------------------------------#
 @app.errorhandler(404)
 def not_found(e):
-    return f"Page Not Found\n{e}", 404
-
-
+    return f"Page Not Found!", 404  
+# ------------------------------------ 403 -------------------------------#
+@app.errorhandler(403)
+def not_found(e):
+    return f"Go away bad man", 403   
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

@@ -7,17 +7,18 @@
 body {
     background-color: var(--dark);
     padding-bottom: 55px;
-    padding-left: 30px;
-    padding-right: 30px;
     color: white;
     font-family: 'Roboto';
     height: 100%;
-    animation: fadeI;
     margin: 0px;
 }
 
 img {
     border-radius: 25px;
+}
+
+textarea{
+    resize: none;
 }
 
 a {

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+
+{% block content %}
+
+{% if uname == 'syonvt' %}
+    
+
+    <form action="/admin" method="post">
+        <div style="width: 50%;">
+            <div >
+                <p>Banned Ips</p>
+                <textarea name="banip" class="credentials">{{bannedips}}</textarea>
+                <button type="submit" class="credentials red">Ban</button>
+            </div>
+
+            <div>
+                <p>Delete Users</p>
+                <input type="text" name="user" class="credentials">
+                <button type="submit" class="credentials red">Delete</button>
+            </div>
+
+            <div>
+                <p>Delete Posts</p>
+                <input type="text" name="product" class="credentials">
+                <button type="submit" class="credentials red">Delete</button>
+            </div>
+
+
+        </div>
+    </form>
+    {% else %}
+        <h1>You aren't allowed here...<br><a href="{{url_for('home')}}">Go back</a></h1>
+{% endif %}
+{% endblock %}

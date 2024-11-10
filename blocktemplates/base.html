@@ -8,17 +8,28 @@
 </head>
 <body>
     {% block head %}
+
     <ul class="navbar">
         <li class="nav-items"><a class="nav-anchor left" href="{{url_for('home')}}">Home</a></li>
         <li class="nav-items"><a class="nav-anchor left" href="{{url_for('upload')}}">Upload</a></li>
         <li class="nav-items"><a class="nav-anchor left" href="{{url_for('edit')}}">Edit</a></li>
         <li class="nav-items"><a class="nav-anchor right" href="{{url_for('cart')}}">Cart</a></li>
         <li class="nav-items"><a class="nav-anchor right" href="{{url_for('requests')}}">Requests</a></li>
+
         {% if loggedin %}
         <li class="nav-items red" style="float: right;"><a class="nav-anchor right red" href="{{url_for('init')}}">Logout</a></li>
         {% else %}
         <li class="nav-items green" style="float: right;"><a class="nav-anchor right green" href="{{url_for('signin')}}">Sign In</a></li>
+        <li class="nav-items green" style="float: right;"><a class="nav-anchor right green" href="{{url_for('signup')}}">Sign Up</a></li>
         {% endif %}
+        
+        <li style="float: right;"><form method="post" action="{{url_for('home')}}">
+            {% if filter %}
+            <input type="text" name="search" placeholder="Search" class="credentials center" style="width: 80%;" value="{{filter}}">
+            {% else %}
+            <input type="text" name="search" placeholder="Search" class="credentials center" style="width: 80%;">
+            {% endif %}    
+        </form></li>
     </ul>
 
     {% if get_flashed_messages() %}
@@ -29,11 +40,10 @@
         {% endfor %} 
     {% endif %}
 
-
-
     {% endblock %}
-
+    <div style="padding-left: 30px; padding-right: 30px;">
     {% block content %}
     {% endblock %}
+    </div>  
 </body>
 </html>

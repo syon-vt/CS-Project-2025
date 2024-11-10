@@ -1,8 +1,7 @@
 #imports
 from mysql.connector import connect
 from pickle import dumps, loads
-
-
+from logging import error
 
 
 #initializes the mysql connector
@@ -52,10 +51,13 @@ def clmnheads(table):
 # ---------------------------------------------------------------------------- #
 
 #returns all items
-def all():
-	cur.execute("SELECT * from ProductData;")
-	return cur.fetchall()
-
+def all(filter):
+	if not filter:
+		cur.execute("SELECT * from ProductData")
+		return cur.fetchall()
+	else:
+		cur.execute(f"SELECT * FROM ProductData WHERE CAPTION LIKE '%{filter}%' ")
+		return cur.fetchall()
 # ---------------------------------------------------------------------------- #
 
 #autoincrement for primary keys
@@ -63,7 +65,7 @@ def increment(col, table):
 	cur.execute(f'SELECT {col} from {table};')
 	try:
 		last = (cur.fetchall()[-1][0])
-		return str(last)[0]+f"{int((str(last)[1:]))+1 :03d}"
+		return str(last)[0]+f"{int(str(last)[1:])+1 :03d}"
 	except:
 		return col[0].upper()+'001'
 	
@@ -107,7 +109,7 @@ def edit(uname, newdata):
 #returns postcount
 def postcount(uname):
 	c=0
-	for product in all():
+	for product in all(None):
 		if product[1].lower() == uname.lower():
 			c+=1
 	return c
@@ -115,8 +117,8 @@ def postcount(uname):
 # ---------------------------------------------------------------------------- #
 
 #creates user
-def signup(name, uname, decrip, email, pwd):
-	cur.execute("INSERT INTO UserData VALUES(%s, %s, %s, %s, %s, %s, %s)", (name, uname, decrip, email, pwd, 0, dumps([])))
+def signup(name, uname, email, pwd):
+	cur.execute("INSERT INTO UserData VALUES(%s, %s, %s, %s, %s, %s)", (name, uname, email, pwd, 0, dumps([])))
 	
 # ------------------------------ LIKE FUNCTIONS ------------------------------ #
 
@@ -203,6 +205,17 @@ def setstatus(rid, status):
 	else:
 		cur.execute("UPDATE RequestData SET STATUS=%s WHERE RID=%s", (status, rid))
 # ------------------------------------- . ------------------------------------ #
+
+# ------------------------------ Admin Functions ----------------------------- #
+
+def banuser(uname):
+	cur.execute("DELETE FROM UserData WHERE UNAME=%s", (uname,))
+
+def delpost(pid):
+	cur.execute("DELETE FROM ProductData WHERE PID=%s", (pid,))
+
+
+# ---------------------------------------------------------------------------- #
 
 # ---------------------------------------------------------------------------- #
 #                                       .                                      #

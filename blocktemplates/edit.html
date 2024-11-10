@@ -5,10 +5,9 @@
     <h1>Edit {{name}}'s Profile</h1>
     <form method="post" action="/edit">
         <div style="display: block; width: 50%;">
-            <input required="required" style="display: block;" class="credentials hover" type="text" name="NAME" value="{{dictionary['NAME']}}" placeholder="Name">
-            <textarea required="required" name="DECRIP" placeholder="Description" class="credentials hover" style="resize: none; overflow-y: hidden;">{{dictionary['DESCRIPTION']}}</textarea>
-            <input required="required" style="display: block;" class="credentials hover" type="text" name="EMAIL" value="{{dictionary['EMAIL']}}" placeholder="Email">
-            <input style="display: block;" class="credentials hover" type="text" name="PWD" placeholder="Password">
+            <input autocomplete="off" required="required" style="display: block;" class="credentials hover" type="text" name="NAME" value="{{dictionary['NAME']}}" placeholder="Name">
+            <input autocomplete="off" required="required" style="display: block;" class="credentials hover" type="text" name="EMAIL" value="{{dictionary['EMAIL']}}" placeholder="Email">
+            <input autocomplete="off" style="display: block;" class="credentials hover" type="password" name="PWD" placeholder="Password">
             <button class = 'center credentials' type="submit" id = 'submit'>Change</button>
         </div> 
     </form>
